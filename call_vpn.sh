@@ -193,7 +193,7 @@ ip link set tun0 up"
   ROUTE_CMD="ip route add 10.0.0.0/8 dev tun0 && \
 ip route add 172.16.0.0/12 dev tun0 && \
 ip route add 192.168.0.0/16 dev tun0 && \
-ip route add 210.224.172.0/24 dev tun0"
+ip route add ${addrSakuraNw} dev tun0"
 elif echo $nameNw | grep -q unknown ; then
   echo "unknown network" >> $pathLog
   exit 1
