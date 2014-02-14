@@ -8,7 +8,7 @@ nameHost=$(hostname)
 localHostSuffix=$(echo $nameHost |awk -F '-' '{print $NF}')
 pathSelf=/usr/local/bin
 pathLog=/var/log/vpn_call.log
-flabDebug=0 #debug flag
+flagDebug=0 #debug flag
 
 #####Function#####
 . ${pathSelf}/functions
@@ -203,12 +203,12 @@ while getopts d OPT
 do
   case $OPT in
   d)
-    flabDebug=1
+    flagDebug=1
   ;;
   esac
 done
 
-if [ $flabDebug -eq 1 ]; then
+if [ $flagDebug -eq 1 ]; then
   ############ debug ###################
   echo "addrNwAddrOct: " $addrNwAddrOct
   echo "addrNwAddrOct_4: " $addrNwAddrOct_4
@@ -233,13 +233,13 @@ fi
 
 echo "##### $(date) Start $0 Script #####" |tee -a $pathLog
 
-if [ $flabDebug -eq 0 ]; then
+if [ $flagDebug -eq 0 ]; then
   chk_line
   conn_tunnel
   chk_tunnel
   set_route
   echo "##### VPN Connected" |tee -a $logFile
-elif [ $flabDebug -eq 1 ]; then
+elif [ $flagDebug -eq 1 ]; then
   echo "##### Debug mode #####" |tee -a $pathLog
   echo $tmpDev
 fi

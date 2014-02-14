@@ -12,7 +12,14 @@ callScript=call_vpn.sh
 #flagDebug=0 #debug flag
 
 #####Function#####
-. ${pathSelf}/functions
+if [ -f ${pathSelf}/functions ]; then
+  . ${pathSelf}/functions
+  get_nw
+  set_nw $nameNw
+else
+    echo "functions file nothing." >> $trapLogFile
+  exit 1
+fi
 
 echo "##### VPN Server:${hostname} vrrp state change Backup to Master. VPN Connect Script Start." |tee -a ${pathLog}
 
@@ -28,6 +35,6 @@ if [ $? -eq 1 ]; then
 fi
 
 #####connect#####
-ssh ${addrInitiateVip} "sh ${pathLog}/${callScript}"
+ssh ${addrInitiateVip} "sh ${pathSelf}/${callScript}"
 
 exit 0
