@@ -8,4 +8,4 @@ do
   cntFile=$(lsof -p $pId |wc -l)
   sed -i "s/\($pId\)\( : [a-z0-9-]*\)/\1\2 : ${i} : ${cntFile}/" $TMP
 done
-cat $TMP ; \rm -f $TMP
+cat $TMP |sort -n -t ':' -k 3 ; \rm -f $TMP
