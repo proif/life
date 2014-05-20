@@ -1,0 +1,9 @@
+---
+- name: iptables release common
+  copy: src=/var/www/html/servers/common/iptables_release dest=/etc/sysconfig/iptables
+  when: deployEnv == "release"
+- name: iptables stage common
+  copy: src=/var/www/html/servers/common/iptables_stage dest=/etc/sysconfig/iptables
+  when: deployEnv == "staging"
+- name: iptables service
+  service: name=iptables state=restarted enabled=yes

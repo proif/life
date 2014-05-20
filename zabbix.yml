@@ -1,0 +1,19 @@
+---
+- name: zabbix repo
+  copy: src={{ zabbixRpmFile }} dest={{ zabbixRpmFile }}
+- shell: rpm -Uvh {{ zabbixRpmFile }}
+  ignore_errors: True
+- name: zabbix agent install
+  yum: name={{ item }} state=installed
+  with_items:
+    - zabbix-agent
+    - zabbix-sender
+- name: agentd.conf
+  copy: src=/var/www/html/zabbix/zabbix_agentd.conf-server dest=/etc/zabbix/zabbix_agentd.conf
+- shell: sed -i 's/Server=/Server='{{ releaseZabbix }}'/' /etc/zabbix/zabbix_agentd.conf
+  when: deployEnv == "release"
+- shell: sed -i 's/Server=/Server='{{ stageZabbix }}'/' /etc/zabbix/zabbix_agentd.conf
+  when: deployEnv == 'staging'
+- service: name=zabbix-agent enabled=yes state=restarted
+- name: zabbix repo unenable
+  shell: sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/zabbix.repo

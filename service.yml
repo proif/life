@@ -1,0 +1,6 @@
+---
+- name: stop services
+  service: name={{ item }} state=stopped enabled=no
+  with_items:
+    - ntpdate
+    - postfix 

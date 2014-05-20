@@ -1,0 +1,11 @@
+---
+- name: sysconfig setting
+  lineinfile: dest=/etc/sysconfig/network owner=root {{ item }}
+  with_items:
+   - regexp='^HOSTNAME=[a-z\.]' line='HOSTNAME={{hostName}}.{{hostDomain}}'
+- name: hosts setting
+  shell: sed -i "s/localhost/{{hostName}}/g" /etc/hosts
+- name: 
+  shell: sed -i "s/localdomain/{{hostDomain}}/g" /etc/hosts
+- name: hostname
+  shell: hostname {{hostName}}.{{hostDomain}}

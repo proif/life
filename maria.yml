@@ -1,0 +1,12 @@
+---
+- name: MariaDB repo
+  copy: src=/var/www/html/servers/{{deployEnv}}/udb/MariaDB.repo dest=/etc/yum.repos.d/MariaDB.repo
+- name: install MariaDB 
+  yum: name={{ item }} state=installed
+  with_items:
+    - MariaDB-Galera-server
+    - MariaDB-client
+    - galera
+- name: server config
+  copy: src=/var/www/html/servers/{{deployEnv}}/udb/server.cnf dest=/etc/my.cnf.d/server.cnf
+

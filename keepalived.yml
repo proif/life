@@ -1,0 +1,14 @@
+---
+- yum: name={{ item }} state=installed
+  with_items:
+    - openssl
+    - openssl-devel
+- name: keepalived tarball
+  copy: src={{ keepalivedTar }} dest={{ keepalivedTar }}
+- shell: cp -ar {{ keepalivedTar }} /root/rpmbuild/SOURCES
+- shell: cd /usr/local/src; tar zxf {{ keepalivedTar }}
+- shell: cd {{keepalivedDir}}
+- shell: "{{ keepalivedDir }}/configure {{ keepaliveSnmpFlag }}"
+- shell: make rpm
+- shell: rpm -ivh /root/rpmbuild/RPMS/x86_64/keepalived-1.2.*.rpm
+- shell: /sbin/chkconfig keepalived on

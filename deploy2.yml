@@ -1,0 +1,70 @@
+---
+- hosts: '{{hosts}}'
+  user: root
+  sudo: no
+  vars:
+    deployEnv: '{{deployEnv}}'
+    hostName: "{{ ansible_hostname }}"
+    hostDomain: in.storage.skaura.ad.jp
+    fileSrc: /usr/local/src
+    zabbixRpmFile: "{{ fileSrc }}/zabbix-release-2.2-1.el6.noarch.rpm"
+    releaseZabbix: 192.168.160.81
+    stageZabbix: 192.168.160.211
+    epelRpmFile: "{{ fileSrc }}/epel-release-6-8.noarch.rpm"
+    keepalivedTar: "{{ fileSrc }}/keepalived-1.2.9.tar.gz"
+    keepalivedDir: "{{ fileSrc }}/keepalived-1.2.9"
+    keepaliveSnmpFlag: ""
+    target: /usr/local/bin
+    targetHostDomain: in.storage.sakura.ad.jp
+  tasks:
+#  - debug: msg={{ ansible_eth0["ipv4"]["address"]}}
+#  - debug: msg={{ deployEnv }}
+#    tags: debug
+#  - name: test
+#    debug: echo msg={{deployEnv}}
+#    when: deployEnv == "release"
+#    tags: test
+#  - name: test2
+#    debug: echo msg={{deployEnv}}
+#    when: deployEnv != "release"
+#  - include: test.yml
+#    tags: test
+  - neme: ipfileter
+    include: ipfilter.yml
+    tabs: ipfilter
+  - name: test connection
+    ping:
+    tags: ping
+  - include: account.yml
+    tags: account
+  - include: hostname.yml
+    tags: hostname
+######################
+  - name: epel repo
+    copy: src={{epelRpmFile}} dest={{epelRpmFile}}
+  - shell: rpm -Uvh {{epelRpmFile}}
+    ignore_errors: True
+    tags: epel
+######################
+  - name: ntpd set
+    copy: src=/var/www/html/servers/common/ntp.conf dest=/etc/ntp.conf
+    tags: ntp
+  - name: ntpd service
+    service: name=ntpd enabled=yes state=restarted
+    tags: ntp
+#  - name: rpmbuild
+#    shell: mkdir -p /root/rpmbuild/SOURCES
+#    ignore_errors: True
+#    tags: rpmbuild
+  - include: maria.yml
+    tags: mariadb
+  - include: zabbix.yml
+    tags: zabbix
+#  - include: keepalived.yml
+#    tags: keepalived
+  - include: service.yml
+    ignore_errors: True
+    tags: stopservice
+#  handlers:
+#  - name: restart zabbix-agent
+  
